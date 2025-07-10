@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 验证提交信息格式
+# 允许的格式：feat: description, fix: description, docs: description, 等
+commit_regex='^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .{1,50}'
+
+if ! grep -qE "$commit_regex" "$1"; then
+    echo "❌ 提交信息格式不正确！"
+    echo "格式应该为: type(scope): description"
+    echo "类型: feat, fix, docs, style, refactor, test, chore"
+    echo "示例: feat: 添加新功能"
+    echo "示例: fix(parser): 修复URL解析错误"
+    exit 1
+fi
