@@ -1,89 +1,94 @@
 # figma-json
 
-一个用于下载 Figma 文件 JSON 数据的 CLI 工具。
+A CLI tool for downloading Figma file JSON data.
 
-## 功能特性
+[中文文档](./README.zh.md) | [English](./README.md)
 
-- 🚀 从 Figma URL 直接下载文件数据
-- 🔑 安全的 token 管理
-- 📁 支持自定义输出目录和文件名
-- 🎯 支持下载指定节点数据
-- 💾 格式化或压缩 JSON 输出
-- 🔍 文件信息预览
-- 🛡️ 完整的错误处理和用户友好提示
+## Features
 
-## 安装
+- 📥 Download Figma file data as JSON
+- 🔐 Secure Figma API token management
+- 🌐 Support for various Figma URL formats
+- 📁 Flexible file organization and naming
+- 🎨 Pretty-printed JSON output
+- 🧪 Comprehensive test coverage
+- 🔧 TypeScript support with strict typing
+- ⚡ Fast and efficient downloads
+
+## Installation
 
 ```bash
 npm install -g figma-json
-# 或使用 pnpm
+# or using pnpm
 pnpm add -g figma-json
 ```
 
-## 使用方法
+## Usage
 
-### 1. 设置 Figma API Token
+### 1. Set up your Figma API token
 
-首先，你需要设置 Figma API token：
+First, you need to set up your Figma API token:
 
 ```bash
 figma-json token set YOUR_FIGMA_TOKEN
 ```
 
-**获取 Figma Token：**
+**🔒 Security Note:** Your token is stored securely on your local machine only. It never leaves your computer or gets transmitted to any third-party services.
 
-1. 登录 [Figma](https://www.figma.com)
-2. 进入 Settings → Account → Personal access tokens
-3. 创建新的 token
-4. 复制 token 并使用上述命令设置
+**How to get Figma Token:**
 
-### 2. 下载 Figma 文件
+1. Log in to [Figma](https://www.figma.com)
+2. Go to Settings → Account → Personal access tokens
+3. Create a new token
+4. Copy the token
 
-#### 基本用法
+### 2. Download Figma files
+
+#### Basic usage
 
 ```bash
 figma-json https://www.figma.com/design/xxx
 ```
 
-#### 高级用法
+#### Advanced usage
 
 ```bash
-# 自定义输出目录
+# Custom output directory
 figma-json <figma-url> -o ./downloads
 
-# 自定义文件名
+# Custom filename
 figma-json <figma-url> -f my-design.json
 
-# 仅下载指定节点（如果 URL 包含 node-id）
+# Download only specified node (if URL contains node-id)
 figma-json <figma-url> --node-only
 
-# 压缩 JSON 输出
+# Minified JSON output
 figma-json <figma-url> --no-pretty
 
-# 覆盖已存在的文件
+# Overwrite existing files
 figma-json <figma-url> --overwrite
 
-# 仅显示文件信息，不下载
+# Show file info only, don't download
 figma-json <figma-url> --info
 ```
 
-### 3. Token 管理
+### 3. Token management
 
 ```bash
-# 查看当前 token（隐藏显示）
+# View current token (masked)
 figma-json token get
 
-# 查看完整 token
+# View full token
 figma-json token get --show
 
-# 验证 token 有效性
+# Verify token validity
 figma-json token verify
 
-# 删除 token
+# Remove token
 figma-json token remove --confirm
 ```
 
-### 4. 查看帮助
+### 4. Help
 
 ```bash
 figma-json --help
@@ -91,138 +96,149 @@ figma-json token --help
 figma-json fetch --help
 ```
 
-## 支持的 URL 格式
+## Supported URL formats
 
-- `https://www.figma.com/design/{fileId}/{fileName}`
+The tool supports various Figma URL formats:
+
 - `https://www.figma.com/file/{fileId}/{fileName}`
+- `https://www.figma.com/design/{fileId}/{fileName}`
 - `https://www.figma.com/proto/{fileId}/{fileName}`
+- URLs with node-id parameter: `?node-id={nodeId}`
 
-支持包含 `node-id` 参数的 URL。
+### How to get Figma URLs
 
-## 命令行选项
+**Method 1: Copy from browser address bar**
+- Open any Figma file in your browser
+- Copy the URL from the address bar
 
-### 全局选项
+**Method 2: Copy link to specific selection** (Recommended)
+1. Open your Figma file
+2. Select any element (Frame, component, layer, etc.)
+3. Right-click on the selected element
+4. Choose **"Copy link to selection"** (or press ⌘L)
+5. This generates a URL with `node-id` parameter pointing to your selected element
 
-| 选项            | 描述         | 默认值 |
-| --------------- | ------------ | ------ |
-| `-v, --version` | 显示版本号   | -      |
-| `-h, --help`    | 显示帮助信息 | -      |
+**Using node-specific URLs:**
+- URLs with `node-id` allow you to download specific parts of a design
+- Use `--node-only` flag to download only the selected element's data
+- Without `--node-only`, the entire file will be downloaded regardless of the node-id
 
-### 下载选项
+## CLI Options
 
-| 选项                    | 描述                 | 默认值   |
-| ----------------------- | -------------------- | -------- |
-| `-o, --output <path>`   | 输出目录             | 当前目录 |
-| `-f, --filename <name>` | 自定义文件名         | 自动生成 |
-| `--pretty`              | 格式化 JSON 输出     | true     |
-| `--no-pretty`           | 压缩 JSON 输出       | false    |
-| `--overwrite`           | 覆盖已存在的文件     | false    |
-| `--node-only`           | 仅获取指定节点数据   | false    |
-| `--info`                | 显示文件信息而不下载 | false    |
+### Global options
 
-## 配置文件
+| Option            | Description       | Default |
+| ----------------- | ----------------- | ------- |
+| `-v, --version`   | Show version      | -       |
+| `-h, --help`      | Show help         | -       |
 
-Token 和配置信息存储在 `~/.figma-json/config.json`。
+### Download options
 
-## 错误处理
+| Option                  | Description                    | Default        |
+| ----------------------- | ------------------------------ | -------------- |
+| `-o, --output <path>`   | Output directory               | Current dir    |
+| `-f, --filename <name>` | Custom filename                | Auto-generated |
+| `--pretty`              | Pretty-printed JSON output     | true           |
+| `--no-pretty`           | Minified JSON output           | false          |
+| `--overwrite`           | Overwrite existing files       | false          |
+| `--node-only`           | Download only specified node   | false          |
+| `--info`                | Show file info without download | false          |
 
-工具提供详细的错误信息和建议：
+## Configuration
 
-- **Token 未设置**：提示如何设置 token
-- **无效 URL**：显示支持的 URL 格式
-- **网络错误**：提供网络连接检查建议
-- **API 错误**：显示具体的 API 错误信息
-- **文件权限**：提示文件权限问题
+**🔒 Local Storage:** Token and configuration are stored securely in `~/.figma-json/config.json` on your local machine. Your Figma token never leaves your computer and is not transmitted to any external services.
 
-## 开发
+## Error handling
 
-### 本地开发
+The tool provides clear error messages for common issues:
 
-**本项目使用 pnpm 作为包管理器：**
+- Invalid or missing Figma token
+- Network connectivity problems
+- Invalid Figma URLs
+- File permission issues
+- API rate limiting
+
+## Development
 
 ```bash
-# 克隆仓库
+# Clone repository
 git clone <repository-url>
 cd figma-json
 
-# 安装 pnpm（如果尚未安装）
+# Install pnpm (if not already installed)
 npm install -g pnpm
 
-# 安装依赖
+# Install dependencies
 pnpm install
 
-# 开发模式运行
+# Run in development mode
 pnpm run dev
 
-# 构建
+# Build the project
 pnpm run build
 
-# TypeScript 语法检查
-pnpm run type-check
-
-# 代码检查
-pnpm run lint
-
-# 自动修复代码格式
-pnpm run lint:fix
-
-# 运行测试
+# Run tests
 pnpm run test
 
-# 运行所有检查（类型检查 + 代码检查 + 测试）
+# Run linting
+pnpm run lint
+
+# Run all checks
 pnpm run check-all
 ```
 
-### 提交代码
+### Quality assurance
 
-项目使用 husky 和 lint-staged 确保代码质量：
+The project includes comprehensive quality checks:
 
-- **预提交检查**：自动运行 TypeScript 语法检查、ESLint 和相关测试
-- **提交信息规范**：必须使用规范的提交信息格式
+- **TypeScript**: Strict type checking
+- **ESLint**: Code style and quality rules
+- **Jest**: Unit and integration tests
+- **Husky**: Pre-commit hooks for code quality
+- **Lint-staged**: Automatic code formatting
 
-**提交信息格式：**
+**Commit message format:**
 
 ```bash
 type(scope): description
 
-# 类型 (type)
-feat:     新功能
-fix:      错误修复
-docs:     文档更新
-style:    代码格式化
-refactor: 重构
-test:     测试相关
-chore:    构建/工具相关
-
-# 示例
-git commit -m "feat: 添加 URL 解析功能"
-git commit -m "fix(parser): 修复中文字符解析问题"
-git commit -m "docs: 更新使用说明"
+# Examples:
+feat: add URL parsing functionality
+fix(parser): handle Chinese characters
+docs: update usage examples
 ```
 
-### 本地测试
+### Local testing
 
 ```bash
-# 创建全局链接
+# Link for local testing
 pnpm link --global
 
-# 测试 CLI
+# Test CLI
 figma-json --help
 ```
 
-## 许可证
+## License
 
 MIT License
 
-## 贡献
+## Contributing
 
-欢迎提交 Issue 和 Pull Request！
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run quality checks (`pnpm run check-all`)
+5. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-## 更新日志
+## Changelog
 
 ### 1.0.0
 
-- 初始版本
-- 支持基本的 Figma 文件下载功能
-- Token 管理
-- 命令行界面
+- Initial release
+- Basic Figma file download functionality
+- Token management
+- Command-line interface
+- TypeScript support
+- Comprehensive test coverage
